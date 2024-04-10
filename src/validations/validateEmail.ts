@@ -1,3 +1,3 @@
-export function validateEmail(email: string) {
-	return email.match(/^(.+)@(.+)$/);
+export function validateEmail(email: string): boolean {
+	return email.match(/^(.+)@(.+)$/) !== null;
 }

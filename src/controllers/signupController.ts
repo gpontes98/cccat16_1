@@ -13,7 +13,6 @@ async function signupController(req: Request, res: Response) {
 			isPassenger,
 			isDriver,
 		});
-
 		res.status(201).json({ accountId });
 	} catch (error: any) {
 		res.status(500).json({ error: error.message });
