@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
-
-import { signup } from "../useCases/signup";
+import { Signup } from "../useCases/Signup";
+import { AccountDAODatabase } from "../resources/AccountDAO";
 
 async function signupController(req: Request, res: Response) {
 	try {
 		const { email, name, cpf, carPlate, isPassenger, isDriver } = req.body;
-		const accountId = await signup({
+		const accountDAO = new AccountDAODatabase();
+		const signup = new Signup(accountDAO);
+		const result = await signup.execute({
 			email,
 			name,
 			cpf,
@@ -13,7 +15,7 @@ async function signupController(req: Request, res: Response) {
 			isPassenger,
 			isDriver,
 		});
-		res.status(201).json({ accountId });
+		res.status(201).json(result);
 	} catch (error: any) {
 		res.status(500).json({ error: error.message });
 	}
