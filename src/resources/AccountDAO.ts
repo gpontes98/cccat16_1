@@ -74,7 +74,7 @@ export class AccountDAOMemory implements AccountDAO {
 		return account;
 	}
 
-	async saveAccount(account: any): Promise<void> {
+	async saveAccount(account: SaveAccountInputDTO): Promise<void> {
 		this.accounts.push(account);
 	}
 }

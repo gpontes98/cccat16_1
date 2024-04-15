@@ -4,7 +4,7 @@ axios.defaults.validateStatus = function () {
 	return true;
 };
 
-const URL = "http://localhost:3000/signup";
+const URL_ACCOUNT = "http://localhost:3000/account";
 
 test("Deve criar uma conta para o passageiro", async function () {
 	const input = {
@@ -13,13 +13,11 @@ test("Deve criar uma conta para o passageiro", async function () {
 		cpf: "87748248800",
 		isPassenger: true,
 	};
-	const responseSignup = await axios.post(URL, input);
+	const responseSignup = await axios.post(URL_ACCOUNT, input);
 	expect(responseSignup.status).toBe(201);
 	const { accountId } = responseSignup.data;
 	expect(accountId).toBeDefined();
-	const responseGetAccount = await axios.get(
-		`http://localhost:3000/getaccount/${accountId}`
-	);
+	const responseGetAccount = await axios.get(`${URL_ACCOUNT}/${accountId}`);
 	const outputGetAccount = responseGetAccount.data;
 	expect(outputGetAccount.name).toBe(input.name);
 	expect(outputGetAccount.email).toBe(input.email);
@@ -33,9 +31,16 @@ test("Deve retornar uma exception 'usuário existente'", async function () {
 		cpf: "87748248800",
 		isPassenger: true,
 	};
-	const response = await axios.post(URL, input);
+	const response = await axios.post(URL_ACCOUNT, input);
 	expect(response.status).toBe(500);
 	const outputSignup = response.data;
 	expect(outputSignup.error).toBe("Usuário já existe");
 	expect(response.status).toBe(500);
+});
+
+test("Deve retornar 'conta não encontrada' quando não encontrar um usuário", async function () {
+	const output = await axios.get(
+		`${URL_ACCOUNT}/2a38a02a-366f-41bc-a299-8c009bf31f21`
+	);
+	expect(output.data.error).toBe("Usuário não encontrado");
 });

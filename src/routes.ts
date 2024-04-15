@@ -1,12 +1,12 @@
 import express from "express";
-import { signupRouter } from "./routes/signupRouter";
-import { getAccountRouter } from "./routes/getAccountRouter";
+import { accountRouter } from "./routes/accountRouter";
+import { rideRouter } from "./routes/rideRouter";
 
 const app = express();
 app.use(express.json());
 
 // Rotas
-app.use("/signup", signupRouter);
-app.use("/getaccount", getAccountRouter);
+app.use("/account", accountRouter);
+app.use("/ride", rideRouter);
 
 export { app };

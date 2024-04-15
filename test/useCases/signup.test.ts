@@ -3,12 +3,10 @@ import { GetAccount } from "../../src/useCases/GetAccount";
 import { Signup } from "../../src/useCases/Signup";
 
 // Integration Test or Unit Test
-
 let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(async () => {
-	// Fake é uma implementação falsa, que mimifica a implementação original
 	const accountDAO = new AccountDAOMemory();
 	signup = new Signup(accountDAO);
 	getAccount = new GetAccount(accountDAO);

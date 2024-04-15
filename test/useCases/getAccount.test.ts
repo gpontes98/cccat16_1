@@ -2,6 +2,7 @@ import { AccountDAOMemory } from "../../src/resources/AccountDAO";
 import { GetAccount } from "../../src/useCases/GetAccount";
 import { Signup } from "../../src/useCases/Signup";
 
+// Integration Test or Unit Test
 let signup: Signup;
 let getAccount: GetAccount;
 
@@ -16,7 +17,7 @@ test("Deve criar uma conta para o passageiro", async function () {
 		name: "John Doe",
 		email: `john.doe${Math.random()}@gmail.com`,
 		cpf: "87748248800",
-		isPassenger: true
+		isPassenger: true,
 	};
 	const outputSignup = await signup.execute(input);
 	expect(outputSignup.accountId).toBeDefined();

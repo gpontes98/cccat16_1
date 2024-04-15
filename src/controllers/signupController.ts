@@ -7,7 +7,7 @@ async function signupController(req: Request, res: Response) {
 		const { email, name, cpf, carPlate, isPassenger, isDriver } = req.body;
 		const accountDAO = new AccountDAODatabase();
 		const signup = new Signup(accountDAO);
-		const result = await signup.execute({
+		const output = await signup.execute({
 			email,
 			name,
 			cpf,
@@ -15,7 +15,7 @@ async function signupController(req: Request, res: Response) {
 			isPassenger,
 			isDriver,
 		});
-		res.status(201).json(result);
+		res.status(201).json(output);
 	} catch (error: any) {
 		res.status(500).json({ error: error.message });
 	}

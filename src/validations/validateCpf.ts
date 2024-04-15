@@ -2,7 +2,6 @@ const FACTOR_FIRST_DIGIT = 10;
 const FACTOR_SECOND_DIGIT = 11;
 
 export function validateCpf(rawCpf: string) {
-	if (!rawCpf) return false;
 	const cpf = removeNonDigits(rawCpf);
 	if (!isValidLength(cpf)) return false;
 	if (allDigitsEqual(cpf)) return false;
