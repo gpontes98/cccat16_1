@@ -2,17 +2,23 @@ import { Ride } from "../../domain/Ride";
 import { DatabaseConnection } from "../database/DatabaseConnection";
 
 export interface RideRepository {
-	startRide(input: Ride): Promise<void>;
+	requestRide(input: Ride): Promise<void>;
 	getRide(rideId: string): Promise<Ride | undefined>;
-	getStartedRidesByPassengerId(
+	getRequestedRidesByPassengerId(
 		passengerId: string
 	): Promise<Ride | undefined>;
+	getAcceptedRidesByDriverId(passengerId: string): Promise<Ride | undefined>;
+	updateStatusRide(
+		rideId: string,
+		status: string,
+		driverId?: string
+	): Promise<void>;
 }
 
 export class RideRepositoryDatabase implements RideRepository {
 	constructor(readonly connection: DatabaseConnection) {}
 
-	async startRide(input: Ride): Promise<void> {
+	async requestRide(input: Ride): Promise<void> {
 		await this.connection.query(
 			"insert into cccat16.ride (ride_id, passenger_id, status, from_lat, from_long, to_lat, to_long, date)  values ($1, $2, $3, $4, $5, $6, $7, $8)",
 			[
@@ -46,14 +52,15 @@ export class RideRepositoryDatabase implements RideRepository {
 					longitude: ride.to_long,
 				},
 				ride.status,
-				ride.date
+				ride.date,
+				ride.driver_id
 			);
 		return undefined;
 	}
 
-	async getStartedRidesByPassengerId(
+	async getRequestedRidesByPassengerId(
 		passengerId: string
-	): Promise<any | undefined> {
+	): Promise<Ride | undefined> {
 		const [ride] = await this.connection.query(
 			"select * from cccat16.ride where passenger_id = $1 and status = 'requested'",
 			[passengerId]
@@ -71,14 +78,51 @@ export class RideRepositoryDatabase implements RideRepository {
 					longitude: ride.to_long,
 				},
 				ride.status,
-				ride.date
+				ride.date,
+				ride.driver_id
+			);
+		return undefined;
+	}
+	async updateStatusRide(
+		rideId: string,
+		status: string,
+		driverId?: string
+	): Promise<void> {
+		await this.connection.query(
+			"UPDATE cccat16.ride SET status = $1, driver_id = $2 WHERE ride_id = $3",
+			[status, driverId ?? null, rideId]
+		);
+	}
+
+	async getAcceptedRidesByDriverId(
+		driverId: string
+	): Promise<Ride | undefined> {
+		const [ride] = await this.connection.query(
+			"SELECT * FROM cccat16.ride WHERE driver_id = $1",
+			[driverId]
+		);
+		if (ride)
+			return Ride.restore(
+				ride.ride_id,
+				ride.passenger_id,
+				{
+					latitude: ride.from_lat,
+					longitude: ride.from_long,
+				},
+				{
+					latitude: ride.to_lat,
+					longitude: ride.to_long,
+				},
+				ride.status,
+				ride.date,
+				ride.driver_id
 			);
 		return undefined;
 	}
 }
 
 export class RideRepositoryMemory implements RideRepository {
-	rides: any[];
+	rides: Ride[];
 
 	constructor() {
 		this.rides = [];
@@ -86,19 +130,43 @@ export class RideRepositoryMemory implements RideRepository {
 
 	async getRide(rideId: string): Promise<any> {
 		const ride = await this.rides.find(
-			(ride: any) => ride.rideId === rideId
+			(ride: Ride) => ride.rideId === rideId
 		);
 		return ride;
 	}
 
-	async startRide(input: Ride): Promise<void> {
+	async requestRide(input: Ride): Promise<void> {
 		this.rides.push(input);
 	}
 
-	async getStartedRidesByPassengerId(passengerId: string): Promise<any> {
-		const ride = await this.rides.find(
-			(ride: any) =>
+	async getRequestedRidesByPassengerId(passengerId: string): Promise<any> {
+		const ride = this.rides.find(
+			(ride: Ride) =>
 				ride.passengerId === passengerId && ride.status === "requested"
+		);
+		return ride;
+	}
+
+	async updateStatusRide(
+		rideId: string,
+		status: string,
+		driverId: string
+	): Promise<void> {
+		const index = this.rides.findIndex((ride) => ride.rideId === rideId);
+		if (index !== -1) {
+			this.rides[index] = {
+				...this.rides[index],
+				status,
+				driverId: driverId ?? this.rides[index].driverId,
+			};
+		}
+	}
+
+	async getAcceptedRidesByDriverId(
+		driverId: string
+	): Promise<Ride | undefined> {
+		const ride = this.rides.find(
+			(ride) => ride.driverId === driverId && ride.status === "accepted"
 		);
 		return ride;
 	}

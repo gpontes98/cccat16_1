@@ -1,27 +1,16 @@
-import { AccountRepository } from "../../infraestructure/repository/AccountRepository";
 import { RideRepository } from "../../infraestructure/repository/RideRepository";
-import { Ride } from "../../domain/Ride";
 
 export class StartRide {
-	constructor(
-		readonly rideRepository: RideRepository,
-		readonly accountRepository: AccountRepository
-	) {}
+	constructor(readonly rideRepository: RideRepository) {}
 
 	async execute(params: any) {
-		const passengerInfo = await this.accountRepository.getAccountById(
-			params.passengerId
+		const rideInfo = await this.rideRepository.getRide(params.rideId);
+		if (!rideInfo) throw new Error("Corrida não encontrada");
+		if (rideInfo.status !== "accepted")
+			throw new Error("A corrida não pode ser iniciada no status atual");
+		await this.rideRepository.updateStatusRide(
+			params.rideId,
+			"in_progress"
 		);
-		if (!passengerInfo) throw new Error("Passageiro não encontrado");
-		if (passengerInfo.isPassenger === false)
-			throw new Error("Deve ser passageiro");
-		const isStartedRide =
-			await this.rideRepository.getStartedRidesByPassengerId(
-				params.passengerId
-			);
-		if (isStartedRide) throw new Error("Corrida já iniciada");
-		const ride = Ride.create(params.passengerId, params.from, params.to);
-		await this.rideRepository.startRide(ride);
-		return { rideId: ride.rideId };
 	}
 }

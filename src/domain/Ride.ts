@@ -13,7 +13,8 @@ export class Ride {
 			longitude: number;
 		},
 		readonly status: string,
-		readonly date: Date
+		readonly date: Date,
+		readonly driverId?: string | null
 	) {}
 
 	static create(
@@ -45,8 +46,9 @@ export class Ride {
 			longitude: number;
 		},
 		status: string,
-		date: Date
+		date: Date,
+		driver_id: string | null
 	) {
-		return new Ride(rideId, passengerId, from, to, status, date);
+		return new Ride(rideId, passengerId, from, to, status, date, driver_id);
 	}
 }
