@@ -38,5 +38,5 @@ test("Deve retornar 'conta não encontrada' quando não encontrar um usuário", 
 test("Deve retornar 'UUID inválido' passando um accountId inválido", async function () {
 	await expect(() =>
 		getAccount.execute({ accountId: "f31f21" })
-	).rejects.toThrow(new Error("UUID inválido"));
+	).rejects.toThrow(new Error("Invalid UUID"));
 });

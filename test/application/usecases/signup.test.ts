@@ -65,7 +65,7 @@ test("Deve retornar uma exception de 'cpf inválido'", async function () {
 		isPassenger: true,
 	};
 	await expect(() => signup.execute(input)).rejects.toThrow(
-		new Error("CPF inválido")
+		new Error("Invalid cpf")
 	);
 });
 
@@ -77,7 +77,7 @@ test("Deve retornar uma exception de 'e-mail inválido'", async function () {
 		isPassenger: true,
 	};
 	await expect(() => signup.execute(input)).rejects.toThrow(
-		new Error("Email inválido")
+		new Error("Invalid email")
 	);
 });
 
@@ -89,7 +89,7 @@ test("Deve retornar uma exception de 'nome inválido'", async function () {
 		isPassenger: true,
 	};
 	await expect(() => signup.execute(input)).rejects.toThrow(
-		new Error("Nome inválido")
+		new Error("Invalid name")
 	);
 });
 
@@ -116,6 +116,6 @@ test("Deve retornar uma exception 'Placa inválida'", async function () {
 		carPlate: "1237107",
 	};
 	await expect(() => signup.execute(input)).rejects.toThrow(
-		new Error("Placa do veículo inválida")
+		new Error("Invalid car plate")
 	);
 });

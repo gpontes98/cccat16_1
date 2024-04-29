@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { RideRepositoryDatabase } from "../../../src/infraestructure/repository/RideRepository";
 import { PgPromiseAdapter } from "../../../src/infraestructure/database/DatabaseConnection";
-import { Ride } from "../../../src/domain/Ride";
+import { Ride } from "../../../src/domain/entity/Ride";
 
 // Integration Test
 test("Deve salvar um registro na tabela ride e consultar por id", async function () {

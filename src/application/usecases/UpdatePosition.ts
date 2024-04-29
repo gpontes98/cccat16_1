@@ -1,6 +1,6 @@
-import crypto from "crypto";
 import { RideRepository } from "../../infraestructure/repository/RideRepository";
 import { RidePositionRepository } from "../../infraestructure/repository/RidePositionRepository";
+import Position from "../../domain/entity/Position";
 
 export class UpdatePosition {
 	constructor(
@@ -9,18 +9,16 @@ export class UpdatePosition {
 	) {}
 
 	async execute(params: any) {
-		const positionId = crypto.randomUUID();
 		const rideInfo = await this.rideRepository.getRide(params.rideId);
 		if (!rideInfo) throw new Error("Corrida não encontrada");
 		if (rideInfo.status !== "in_progress")
 			throw new Error("A corrida precisa ter status in_progress");
-		const input = {
-			positionId,
-			rideId: params.rideId,
-			lat: params.lat,
-			long: params.long,
-			date: new Date(),
-		};
-		await this.ridePositionRepository.updatePosition(input);
+
+		const position = Position.create(
+			params.rideId,
+			params.lat,
+			params.long
+		);
+		await this.ridePositionRepository.updatePosition(position);
 	}
 }

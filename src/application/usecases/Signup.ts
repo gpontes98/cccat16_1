@@ -1,5 +1,5 @@
 import { AccountRepository } from "../../infraestructure/repository/AccountRepository";
-import { Account } from "../../domain/Account";
+import { Account } from "../../domain/entity/Account";
 
 export class Signup {
 	constructor(readonly accountRepository: AccountRepository) {}
@@ -19,7 +19,7 @@ export class Signup {
 		);
 		await this.accountRepository.saveAccount(account);
 		return {
-			accountId: account.accountId,
+			accountId: account.getAccountId(),
 		};
 	}
 }

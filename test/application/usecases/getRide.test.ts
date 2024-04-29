@@ -10,7 +10,7 @@ beforeEach(async () => {
 
 test("Deve passar um UUID inválido como parametro de rideId", async function () {
 	await expect(() => getRide.execute({ rideId: "123456" })).rejects.toThrow(
-		new Error("UUID inválido")
+		new Error("Invalid UUID")
 	);
 });
 

@@ -1,4 +1,4 @@
-import { Account } from "../../domain/Account";
+import { Account } from "../../domain/entity/Account";
 import { DatabaseConnection } from "../database/DatabaseConnection";
 
 // Driven/Resource Port
@@ -51,11 +51,11 @@ export class AccountRepositoryDatabase implements AccountRepository {
 		await this.connection.query(
 			"insert into cccat16.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) values ($1, $2, $3, $4, $5, $6, $7)",
 			[
-				account.accountId,
-				account.name,
-				account.email,
-				account.cpf,
-				account.carPlate,
+				account.getAccountId(),
+				account.getName(),
+				account.getEmail(),
+				account.getCpf(),
+				account.getCarPlate(),
 				!!account.isPassenger,
 				!!account.isDriver,
 			]
@@ -73,33 +73,33 @@ export class AccountRepositoryMemory implements AccountRepository {
 
 	async getAccountByEmail(email: string): Promise<Account | undefined> {
 		const account = this.accounts.find(
-			(account: Account) => account.email === email
+			(account: Account) => account.getEmail() === email
 		);
 		if (account)
 			return Account.restore(
-				account.accountId,
-				account.name,
-				account.email,
-				account.cpf,
+				account.getAccountId(),
+				account.getName(),
+				account.getEmail(),
+				account.getCpf(),
 				account.isPassenger,
 				account.isDriver,
-				account.carPlate
+				account.getCarPlate()
 			);
 	}
 
 	async getAccountById(accountId: string): Promise<Account | undefined> {
 		const account = this.accounts.find(
-			(account: Account) => account.accountId === accountId
+			(account: Account) => account.getAccountId() === accountId
 		);
 		if (account)
 			return Account.restore(
-				account.accountId,
-				account.name,
-				account.email,
-				account.cpf,
+				account.getAccountId(),
+				account.getName(),
+				account.getEmail(),
+				account.getCpf(),
 				account.isPassenger,
 				account.isDriver,
-				account.carPlate
+				account.getCarPlate()
 			);
 	}
 
